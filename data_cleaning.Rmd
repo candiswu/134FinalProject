@@ -1,0 +1,210 @@
+---
+title: "Data Cleaning"
+author: "Group 22"
+date: "2024-10-25"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo = FALSE}
+# loading in libraries
+library(tidyverse)
+library(stringr)
+```
+
+```{r}
+# loading in the dataset
+members <- read.csv('~/Desktop/pstat234/final/data/DS_Club24-25_Members.csv')
+members
+```
+
+```{r}
+# getting list of column names
+colnames <- colnames(members)
+colnames
+```
+
+
+```{r}
+# dropping columns we don't need 
+members_clean <- members %>% 
+  # dropping columns we don't need  
+  select(-"Timestamp",
+         -"What.was.your.payment.method.", 
+         -"When.is.your.Zelle.account.name..if.paying.through.Zelle.", 
+         -"If.you.paid.through.Zelle..please.attach.a.confirmation.screenshot.here.",
+         -"ONLY.if.you.bought.a.t.shirt..what.size.would.you.like.",
+         -"Thank.you.for.filling.out.this.form..and.welcome.to.the.club..Anything.else.you.would.like.to.share.with.us.", 
+         -"NOTES") %>%
+  # changing column names for simplicity
+  rename(name = "Full.Name",
+         email = "Email", 
+         gender = "Gender", 
+         grad_year = "Graduation.Year", 
+         transfer = "Are.you.a.transfer.student.", 
+         major = "Major.s.", 
+         minor = "Minor.s.", 
+         courses = "Which.of.the.following.classes.have.you.completed..or.are.currently.taking.....Note..We.welcome.students.from.all.experience.levels.to.join.our.club..and.we.only.ask.about.classes.to.better.tailor.our.events.to.our.members.", 
+         returning_member = "Are.you.a.returning.member.to.Data.Science.UCSB.", 
+         prog_lang_exp = "Which.of.the.following.programming.languages.do.you.have.experience.in.", 
+         python_package = "For.Python.users..Which.of.the.following.packages.are.you.familiar.with.", 
+         intern_job_count = "How.many.internships.jobs.have.you.participated.in.", 
+         club_resource = "Which.of.the.following.club.resources.do.you.plan.to.participate.in.")
+head(members_clean)
+```
+
+```{r}
+# changing categorical variables to factors
+members_clean <- members_clean %>%
+  mutate_at(vars(gender, 
+                 grad_year, 
+                 transfer, 
+                 returning_member), as.factor)
+
+# shows what the levels are in the categorical variables
+lapply(members_clean[, c("gender", 
+                          "grad_year", 
+                          "transfer", 
+                          "returning_member")], levels)
+
+# note: the variables with yes or no values can be converted to 0 or 1 for visualizations 
+# depends on what kind of graphs or tables you are making
+```
+
+
+```{r, eval = FALSE}
+# organizing programming language experience
+
+# NOTE: only run this code chunk once otherwise there will be error!!
+
+prog_lang_list <- unique(unlist(strsplit(na.omit(members_clean$prog_lang_exp), 
+                                         ", ")))
+# creating new columns for each unique language with 'Yes' or 'No' values
+for (lang in prog_lang_list) {
+  members_clean[[lang]] <- ifelse(grepl(lang, 
+                                        members_clean$prog_lang_exp, 
+                                        fixed = TRUE), "Yes", "No")}
+members_clean <- members_clean %>% 
+  select(-prog_lang_exp)
+```
+
+```{r, eval = FALSE, echo = FALSE}
+# ignore this lol
+languages <- c("C/C++", "Java", "JavaScript/TypeScript", "Python", "R", "SQL")
+members_clean <- members_clean %>%
+  mutate(prog_lang_exp = strsplit(as.character(prog_lang_exp), ", ")) %>%  # split the languages
+  unnest(prog_lang_exp) %>%  # expand into long format
+  mutate(value = as.character("Yes")) %>% # mark presence as "Yes"
+  pivot_wider(
+    names_from = prog_lang_exp,
+    values_from = value, 
+    values_fill = list(value = "No"))
+members_clean
+```
+
+
+```{r, eval = FALSE}
+# organizing members' experience with python packages
+
+# NOTE: only run this code chunk once otherwise there will be error!!
+
+py_package_list <- unique(unlist(strsplit(na.omit(members_clean$python_package), 
+                                         ", ")))
+# creating new columns for each unique pacakge with 'Yes' or 'No' values
+for (pack in py_package_list) {
+  members_clean[[pack]] <- ifelse(grepl(pack, 
+                                        members_clean$python_package, 
+                                        fixed = TRUE), "Yes", "No")}
+members_clean <- members_clean %>% 
+  select(-python_package)
+```
+
+```{r, eval = FALSE}
+# organizing courses taken or taking
+
+# NOTE: only run this code chunk once otherwise there will be error!!
+
+course_list <- unique(unlist(strsplit(na.omit(members_clean$courses), 
+                                         ", ")))
+# creating new columns for each unique language with 'Yes' or 'No' values
+for (class in course_list) {
+  members_clean[[class]] <- ifelse(grepl(class, 
+                                        members_clean$courses, 
+                                        fixed = TRUE), "Yes", "No")}
+members_clean <- members_clean %>% 
+  select(-courses)
+```
+
+```{r}
+members_clean
+```
+
+```{r, eval = FALSE}
+# organizing club resources interest among members
+
+# NOTE: only run this code chunk once otherwise there will be error!!
+
+resource_list <- unique(unlist(strsplit(na.omit(members_clean$club_resource), 
+                                         ", ")))
+# creating new columns for each unique language with 'Yes' or 'No' values
+for (resource in resource_list) {
+  members_clean[[resource]] <- ifelse(grepl(resource, 
+                                        members_clean$club_resource, 
+                                        fixed = TRUE), "Yes", "No")}
+members_clean <- members_clean %>% 
+  select(-club_resource)
+```
+
+
+```{r}
+# organizing column names because it got messed up by comma separation
+members_clean <- members_clean %>% 
+  select(-"3B",
+         -"or AP Calculus)", 
+         -"LinkedIn", 
+         -"etc.)", 
+         -"Regression",
+         -"Machine learning", 
+         -"I'm open to almost anything", 
+         -"just trying to expand my knowledge and personal connections. ", 
+         -"Actuarial association ", 
+         -"big/little", 
+         -"Big/little") %>%
+  rename("Calculus/Math 3A/Math 3B/AP Calc" = "Calculus (Math 3A", 
+         "Professional workshops" = "Professional workshops (e.g. Resume", 
+         "Technical workshops" = "Technical workshops (e.g. Python + Packages" # Python + Packages, Regression, ML
+         )
+```
+
+```{r}
+# final variables included in the dataset
+names <- colnames(members_clean)
+names
+```
+
+```{r}
+# change all the binary yes or no values to a factor data type
+members_clean <- members_clean %>%
+  mutate_at(vars(Java, Python, R, SQL, "C/C++", "JavaScript/TypeScript", 
+                 NumPy, Pandas, SciPy, "Scikit-learn", PyTorch, Tensorflow, 
+                 "Math 4A", "CS 9", "Calculus/Math 3A/Math 3B/AP Calc", "Math 6A", 
+                 "Math 8/PSTAT 8/CS 40", "PSTAT 10", "PSTAT 120A", "PSTAT 120B", 
+                 "PSTAT 126", "PSTAT 160A/160B", "Math 117", "PSTAT 131", 
+                 "Math 108A", "CS 165A/165B", "PSTAT 135", "Career fair", 
+                 "Professional workshops", "Technical workshops", 
+                 "Company talks & Data talks", "Social events", "Project groups"), 
+            as.factor)
+members_clean
+```
+
+```{r}
+# storing into new csv file
+write.csv(members_clean, "~/Desktop/pstat234/final/data/members_clean.csv", row.names = FALSE)
+
+# note: not sure how to deal with the majors
+# how do we want to organize people with double majors
+```
+
