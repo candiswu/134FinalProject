@@ -1,0 +1,40 @@
+---
+title: "Data Cleaning"
+author: "Group 22"
+date: "2024-11-13"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+```{r, echo = FALSE}
+library(tidyverse)
+library(stringr)
+library(dplyr)
+```
+
+```{r}
+internships_df <- read.csv('data/internships.csv')
+head(internships_df)
+```
+
+```{r}
+internships_df_clean <- internships_df %>% select(-Perk.4, -Perk.5, -Perk.6)
+head(internships_df_clean)
+```
+
+```{r}
+experience_levels <- c("no experience", "at least one internship experience", "at least two internship experiences")
+internships_df_clean$ExperienceQualifications <- sample(experience_levels, nrow(internships_df_clean), replace = TRUE)
+```
+
+```{r}
+class_levels <- c("freshman or sophomores", "juniors", "seniors")
+internships_df_clean$ClassYearQualifications <- sample(class_levels, nrow(internships_df_clean), replace = TRUE)
+```
+
+```{r}
+write.csv(internships_df_clean, "data/internships_clean.csv", row.names = FALSE)
+```
