@@ -50,6 +50,7 @@ internships_df_clean <- internships_df_clean %>%
     ),
     ClassYearQualifications = case_when(
       Job.Type == "Full Time" ~ sample(c("juniors", "seniors"), 1),
+      # might add "graduate" as one of the categories if i have time
       TRUE ~ sample(class_levels, 1)
     )
   ) %>%
@@ -71,5 +72,7 @@ internships_df_clean$ClassYearQualifications <- sample(class_levels, nrow(intern
 
 ```{r}
 # creating a new cleaned csv for later use
-write.csv(internships_df_clean, "data/internships_clean.csv", row.names = FALSE)
+write.csv(internships_df_clean, 
+          '~/Documents/Github/134FinalProject/data/internships_clean.csv', 
+          row.names = FALSE)
 ```
