@@ -27,20 +27,49 @@ perk_columns
 ```
 ```{r}
 internships_df_clean <- internships_df %>% 
-  select(-all_of(perk_columns)) # remove all perk columns
+  select(-all_of(perk_columns)) %>% # remove all perk columns
+  select(-Experience)
 head(internships_df_clean)
 ```
 
 ```{r}
+experience_levels <- c("no experience", 
+                       "at least one internship experience", 
+                       "at least two internship experiences")
+
+class_levels <- c("freshman or sophomores", 
+                  "juniors", 
+                  "seniors")
+
+internships_df_clean <- internships_df_clean %>%
+  rowwise() %>%
+  mutate(ExperienceQualifications = case_when(
+      Job.Type == "Full Time" ~ sample(c("at least one internship experience", 
+                                        "at least two internship experiences"), 1),
+      TRUE ~ sample(experience_levels, 1)
+    ),
+    ClassYearQualifications = case_when(
+      Job.Type == "Full Time" ~ sample(c("juniors", "seniors"), 1),
+      TRUE ~ sample(class_levels, 1)
+    )
+  ) %>%
+  ungroup()
+
+internships_df_clean
+```
+
+
+```{r, eval = FALSE}
 experience_levels <- c("no experience", "at least one internship experience", "at least two internship experiences")
 internships_df_clean$ExperienceQualifications <- sample(experience_levels, nrow(internships_df_clean), replace = TRUE)
 ```
 
-```{r}
+```{r, eval = FALSE}
 class_levels <- c("freshman or sophomores", "juniors", "seniors")
 internships_df_clean$ClassYearQualifications <- sample(class_levels, nrow(internships_df_clean), replace = TRUE)
 ```
 
 ```{r}
+# creating a new cleaned csv for later use
 write.csv(internships_df_clean, "data/internships_clean.csv", row.names = FALSE)
 ```
