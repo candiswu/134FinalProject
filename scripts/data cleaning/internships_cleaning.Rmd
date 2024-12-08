@@ -16,12 +16,18 @@ library(dplyr)
 ```
 
 ```{r}
-internships_df <- read.csv('data/internships.csv')
-head(internships_df)
+internships_df <- read.csv('~/Documents/Github/134FinalProject/data/internships.csv') # replace with your own file path
+internships_df
 ```
 
 ```{r}
-internships_df_clean <- internships_df %>% select(-Perk.4, -Perk.5, -Perk.6)
+# find columns with "perk" in their name
+perk_columns <- grep("Perk", names(internships_df), value = TRUE)
+perk_columns
+```
+```{r}
+internships_df_clean <- internships_df %>% 
+  select(-all_of(perk_columns)) # remove all perk columns
 head(internships_df_clean)
 ```
 
