@@ -201,8 +201,16 @@ members_clean
 ```
 
 ```{r}
+# anonymized members personal information
+members_clean <- members_clean %>% 
+  dplyr::select(-"name", -email)
+members_clean
+```
+
+
+```{r}
 # storing into new csv file
-write.csv(members_clean, "~/Desktop/pstat234/final/data/members_clean.csv", row.names = FALSE)
+write.csv(members_clean, "~/Documents/Github/134FinalProject/data/members_clean.csv", row.names = FALSE)
 
 # note: not sure how to deal with the majors
 # how do we want to organize people with double majors
