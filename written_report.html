@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+<html xmlns="http://www.w3.org/1999/xhtml" lang="en" xml:lang="en"><head>
+
+<meta charset="utf-8">
+<meta name="generator" content="quarto-1.1.189">
+
+<meta name="viewport" content="width=device-width, initial-scale=1.0, user-scalable=yes">
+
+<meta name="author" content="Group 22">
+
+<title>Write Up for Job Recommender System</title>
+<style>
+code{white-space: pre-wrap;}
+span.smallcaps{font-variant: small-caps;}
+div.columns{display: flex; gap: min(4vw, 1.5em);}
+div.column{flex: auto; overflow-x: auto;}
+div.hanging-indent{margin-left: 1.5em; text-indent: -1.5em;}
+ul.task-list{list-style: none;}
+ul.task-list li input[type="checkbox"] {
+  width: 0.8em;
+  margin: 0 0.8em 0.2em -1.6em;
+  vertical-align: middle;
+}
+</style>
+
+
+<script src="written_report_files/libs/clipboard/clipboard.min.js"></script>
+<script src="written_report_files/libs/quarto-html/quarto.js"></script>
+<script src="written_report_files/libs/quarto-html/popper.min.js"></script>
+<script src="written_report_files/libs/quarto-html/tippy.umd.min.js"></script>
+<script src="written_report_files/libs/quarto-html/anchor.min.js"></script>
+<link href="written_report_files/libs/quarto-html/tippy.css" rel="stylesheet">
+<link href="written_report_files/libs/quarto-html/quarto-syntax-highlighting.css" rel="stylesheet" id="quarto-text-highlighting-styles">
+<script src="written_report_files/libs/bootstrap/bootstrap.min.js"></script>
+<link href="written_report_files/libs/bootstrap/bootstrap-icons.css" rel="stylesheet">
+<link href="written_report_files/libs/bootstrap/bootstrap.min.css" rel="stylesheet" id="quarto-bootstrap" data-mode="light">
+
+
+</head>
+
+<body class="fullcontent">
+
+<div id="quarto-content" class="page-columns page-rows-contents page-layout-article">
+
+<main class="content" id="quarto-document-content">
+
+<header id="title-block-header" class="quarto-title-block default">
+<div class="quarto-title">
+<h1 class="title">Write Up for Job Recommender System</h1>
+</div>
+
+
+
+<div class="quarto-title-meta">
+
+    <div>
+    <div class="quarto-title-meta-heading">Author</div>
+    <div class="quarto-title-meta-contents">
+             <p>Group 22 </p>
+          </div>
+  </div>
+    
+    
+  </div>
+  
+
+</header>
+
+<section id="introduction" class="level1">
+<h1>Introduction</h1>
+<p>Let’s be honest—job hunting sucks. It’s like online dating but worse, because at least bad dates come with free food (well, except for Ryan who loses money). That’s why we decided to join forces and create this job recommendation system, turning our shared frustration (just kidding) into a creative solution. Inspired by the need for a real-world, impactful project, we aimed to build something valuable for the Data Science UCSB club that could help members succeed in the industry. By combining machine learning with domain expertise, we hope to make job hunting a bit less painful for everyone.</p>
+</section>
+<section id="methodology" class="level1">
+<h1>Methodology</h1>
+<section id="exploratory-data-analysis" class="level2">
+<h2 class="anchored" data-anchor-id="exploratory-data-analysis">Exploratory Data Analysis</h2>
+<p>We began by getting access to the Data Science UCSB Club member registration dataset, which included insights into members’ skillsets, interests, and academic backgrounds. We also needed job data to pair with our member data, and we found this through a Kaggle dataset that contained information like job titles, required skills, and perks. After we identified the datasets, we cleaned them by handling missing values, removing unneccessary columns, and factoring categorical variables. Afterwards, we wanted to see if there were any useful information or trends normally not visible and developed visualizations to better understand our results. We then found various insights: correlations between certain coding languages, a majority of members identifying as data science majors, a steady increase in average internship counts with advancing school years, a predominance of internships among job listings, and computer science emerging as the most frequently sought-after major. Computer science being the most highly demanded major was especially surprising, considering that the dataset highlighted data science jobs. This could be a factor as to why the job hunt isn’t going so well for data science majors, as computer science offers broader career opportunities and foundational skills that are applicable across various industries. Additionally, our internship analysis, illustrated through box plots and stacked proportion bar graphs, revealed that most students across graduation years completed zero or one internship. While the 2025 cohort showed slightly higher participation and the 2024 cohort had notable outliers with higher internship counts, the overall trend highlights a significant gap in internship experiences. This demonstrates the urgent need for our club and school to expand internship opportunities, potentially through providing better resources to enhance students’ career readiness.</p>
+<p><img src="images/Screen%20Shot%202024-12-09%20at%202.07.53%20PM.png" class="img-fluid"></p>
+<p><img src="images/Screen%20Shot%202024-12-09%20at%201.56.40%20PM.png" class="img-fluid"></p>
+<p><img src="images/IMG_3149.jpeg" class="img-fluid"></p>
+</section>
+<section id="preprocessing-and-vectorization" class="level2">
+<h2 class="anchored" data-anchor-id="preprocessing-and-vectorization">Preprocessing and Vectorization</h2>
+<p>The first step in building the recommendation system is to preprocess both the dataset containing information about each member and the dataset with available jobs and internships. Since some columns of both datasets are numerical, such as <code>intern_job_count</code> and <code>grad_year</code>, a categorization function was used to convert these values into text. We then combined all relevant columns of the <code>members</code> dataset and the <code>internships</code> dataset into a singular <code>text</code> column that can be tokenized. To preprocess the data, we converted all text to lowercase, removed any punctuation, and tokenized all words from the <code>text</code> column using the <code>nltk</code> library. We also used the Porter stemmer to remove any stop words, or commonly used words that do not carry any meaning. After these preprocessing steps were applied to each respective dataset on the <code>text</code> column, we combined all preprocessed data into one variable to use for vectorization. To convert the textual data into numerical form, we implemented TF-IDF (Term Frequency-Inverse Document Frequency) vectorization using the <code>sklearn</code> library. This transforms the text into a matrix of TF-IDF features, quantifying how important a word is relative to a corpus. A TF-IDF matrix is computed after using the <code>fit_transform</code> function to compute the TF_IDF scores for each term. This matrix is then split into two, one for the student data and one for the job data.</p>
+</section>
+<section id="cosine-similarity-and-the-recommendation-system" class="level2">
+<h2 class="anchored" data-anchor-id="cosine-similarity-and-the-recommendation-system">Cosine similarity and the Recommendation System</h2>
+<p>Our recommendation system utilizes a content-based filtering approach to match students (club members) with tailored internship opportunities that align with their unique profiles and interests. The system leverages text preprocessing and TF-IDF vectorization to transform unstructured textual data—like student skills, location preferences, and internship requirements—into numerical representations. Using cosine similarity, the system quantifies how closely a student’s profile matches the attributes of a given internship, such as job qualifications, skills, and location. A heuristic score is calculated by combining these similarity measures, where components like location, experience, and skills are weighted equally to produce an overall “match score. To enhance and automate this recommendation process, the labeled heuristic scores serve as the target variable for training a Random Forest Regressor—an ensemble machine learning model that uses multiple decision trees to predict scores for unseen student-internship pairs. Input features, such as <code>student_id</code> and <code>internship_id</code>, are one-hot encoded to create a format suitable for model training. The trained model generates predictions that rank internships by their relevance to a specific student’s profile. This approach focuses on content-based filtering by using features directly related to the content of both student and internship data, ensuring personalized recommendations based solely on the attributes of the user and items.</p>
+<p><img src="images/Screen%20Shot%202024-12-09%20at%201.58.41%20PM.png" class="img-fluid"></p>
+</section>
+</section>
+<section id="conclusion" class="level1">
+<h1>Conclusion</h1>
+<p>Our model was able to generate internship recommendations by leveraging content-based filtering and a Random Forest Regressor, which assigned relevance scores based on how closely a student’s skills, experiences, and preferences aligned with the attributes of each internship. The output is a ranked table of internship suggestions for each student, where each row presents an internship title and its predicted relevance score; higher scores indicate stronger matches. Visualizations highlight the top recommendations, demonstrating the system’s capacity to deliver personalized opportunities. For instance, the top 5 recommended internships could be highlighted, showcasing the system’s ability to deliver tailored and meaningful opportunities for individual students. The final results showed that while the model effectively captured general trends between student and internship profiles, there is room for improvement, particularly in cases where the data lacked sufficient detail or diversity. In conclusion, our job recommendation system takes the pain out of job hunting into a smarter process, taking out the tediousness of online dating (minus the free food, unless you’re Ryan, who again, ends up losing money to pay for everything). As for next steps, we want to turn this into something usable for the Data Science UCSB Club members–but first we need to improve the accuracy. A possible reason why our accuracy is so low is because our predictors did not provide enough information about our candidates, leading to us having to generate fake data to align with the scope of the project. Therefore, for next year’s member registration google form, we’ve decided to add more survey questions to help us understand the needs of our users a lot better. In addition, we were also considering utilizing more advanced machine learning techniques to further improve the accuracy of the recommendations. By continuing to evolve the system, we can make job hunting a whole lot less painful (we promise, it’s a joke again) for everyone.</p>
+</section>
+
+</main>
+<!-- /main column -->
+<script id="quarto-html-after-body" type="application/javascript">
+window.document.addEventListener("DOMContentLoaded", function (event) {
+  const toggleBodyColorMode = (bsSheetEl) => {
+    const mode = bsSheetEl.getAttribute("data-mode");
+    const bodyEl = window.document.querySelector("body");
+    if (mode === "dark") {
+      bodyEl.classList.add("quarto-dark");
+      bodyEl.classList.remove("quarto-light");
+    } else {
+      bodyEl.classList.add("quarto-light");
+      bodyEl.classList.remove("quarto-dark");
+    }
+  }
+  const toggleBodyColorPrimary = () => {
+    const bsSheetEl = window.document.querySelector("link#quarto-bootstrap");
+    if (bsSheetEl) {
+      toggleBodyColorMode(bsSheetEl);
+    }
+  }
+  toggleBodyColorPrimary();  
+  const icon = "";
+  const anchorJS = new window.AnchorJS();
+  anchorJS.options = {
+    placement: 'right',
+    icon: icon
+  };
+  anchorJS.add('.anchored');
+  const clipboard = new window.ClipboardJS('.code-copy-button', {
+    target: function(trigger) {
+      return trigger.previousElementSibling;
+    }
+  });
+  clipboard.on('success', function(e) {
+    // button target
+    const button = e.trigger;
+    // don't keep focus
+    button.blur();
+    // flash "checked"
+    button.classList.add('code-copy-button-checked');
+    var currentTitle = button.getAttribute("title");
+    button.setAttribute("title", "Copied!");
+    setTimeout(function() {
+      button.setAttribute("title", currentTitle);
+      button.classList.remove('code-copy-button-checked');
+    }, 1000);
+    // clear code selection
+    e.clearSelection();
+  });
+  function tippyHover(el, contentFn) {
+    const config = {
+      allowHTML: true,
+      content: contentFn,
+      maxWidth: 500,
+      delay: 100,
+      arrow: false,
+      appendTo: function(el) {
+          return el.parentElement;
+      },
+      interactive: true,
+      interactiveBorder: 10,
+      theme: 'quarto',
+      placement: 'bottom-start'
+    };
+    window.tippy(el, config); 
+  }
+  const noterefs = window.document.querySelectorAll('a[role="doc-noteref"]');
+  for (var i=0; i<noterefs.length; i++) {
+    const ref = noterefs[i];
+    tippyHover(ref, function() {
+      // use id or data attribute instead here
+      let href = ref.getAttribute('data-footnote-href') || ref.getAttribute('href');
+      try { href = new URL(href).hash; } catch {}
+      const id = href.replace(/^#\/?/, "");
+      const note = window.document.getElementById(id);
+      return note.innerHTML;
+    });
+  }
+  var bibliorefs = window.document.querySelectorAll('a[role="doc-biblioref"]');
+  for (var i=0; i<bibliorefs.length; i++) {
+    const ref = bibliorefs[i];
+    const cites = ref.parentNode.getAttribute('data-cites').split(' ');
+    tippyHover(ref, function() {
+      var popup = window.document.createElement('div');
+      cites.forEach(function(cite) {
+        var citeDiv = window.document.createElement('div');
+        citeDiv.classList.add('hanging-indent');
+        citeDiv.classList.add('csl-entry');
+        var biblioDiv = window.document.getElementById('ref-' + cite);
+        if (biblioDiv) {
+          citeDiv.innerHTML = biblioDiv.innerHTML;
+        }
+        popup.appendChild(citeDiv);
+      });
+      return popup.innerHTML;
+    });
+  }
+});
+</script>
+</div> <!-- /content -->
+
+
+
+</body></html>
