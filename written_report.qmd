@@ -7,7 +7,7 @@ editor: visual
 
 # Introduction
 
-Let's be honest---job hunting sucks. It's like online dating but worse, because at least bad dates come with free food (well, except for Ryan who loses money). That's why we decided to join forces and create this job recommendation system, turning our shared frustration (just kidding) into a creative solution. Inspired by the need for a real-world, impactful project, we aimed to build something valuable for the Data Science UCSB club that could help members succeed in the industry. By combining machine learning with domain expertise, we hope to make job hunting a bit less painful for everyone.
+Let's be honest---job hunting sucks. It's like online dating but worse, because at least bad dates come with free food (well, except for Ryan who loses money as a dude not a dudette). That's why we decided to join forces and create this job recommendation system, turning our shared frustration (just kidding) into a creative solution. Inspired by the need for a real-world, impactful project, we aimed to build something valuable for the Data Science UCSB club that could help members succeed in the industry. By combining machine learning with domain expertise, we hope to make job hunting a bit less painful for everyone.
 
 # Methodology
 
