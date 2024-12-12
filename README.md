@@ -59,3 +59,7 @@ By evolving this system, we hope to make job hunting less painful!
 - nltk: Text Preprocessing
 - sklearn: TF-IDF Vectorization, Machine Learning Models
 - Random Forest Regressor: Scoring Predictions
+
+## Slides 🤓
+
+Link to Presentation: https://www.canva.com/design/DAGYCIRK8kM/VXOS9eD7dNIKjVYKU-PdEA/view?utm_content=DAGYCIRK8kM&utm_campaign=designshare&utm_medium=link&utm_source=editor
